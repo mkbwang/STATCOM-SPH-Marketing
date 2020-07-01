@@ -1,0 +1,167 @@
+---
+title: "Open Survey Results"
+author: "Nicholas Hartman (nhar)"
+date: "6/24/2020"
+output: html_document
+---
+
+```{r include=FALSE}
+#Reading in Data and Packages
+library(tidyverse); library(haven); library(boxr); library(likert); library(knitr)
+
+setwd('~/UM/Biostatistics/STATCOM/processed_data')
+
+
+#SPH
+sph <- read.csv("SPH_open_cleaned.csv") %>%  # One Data File
+  as_factor # Associate labels and factor levels with multiple choice questions
+
+#Duderstadt
+dude <- read.csv("Duderstadt_open_cleaned.csv") %>%  # One Data File
+  as_factor # Associate labels and factor levels with multiple choice questions
+```
+
+```{r include=FALSE}
+#Combine data
+sph$Survey=rep("sph",dim(sph)[1])
+dude$Survey=rep("sph",dim(dude)[1])
+full=rbind(sph,dude)
+full.complete=full[complete.cases(full),]
+```
+
+```{r include=FALSE}
+#Extract Data for Likert
+sub=full[,c("Affiliation","Q7_1","Q7_2","Q7_3","Q7_4","Q7_5","Q7_6","Q7_7","Q7_8")]
+num_data=full[,c("Q7_1","Q7_2","Q7_3","Q7_4","Q7_5","Q7_6","Q7_7","Q7_8")]
+names(num_data)=c("Degree Requirements","Research Areas/Areas of Study",
+                  "Department-Specific Information","Career Outcomes","Faculty Information","Student Life",
+                  "Financial Aid (Scholarships and Funding)","Location")
+affiliation=sub[complete.cases(sub),]$Affiliation
+affiliation[affiliation=="Undergraduate"]="Undergraduate Students"
+affiliation[affiliation=="Master's Student"]="Master's Students"
+num_data=as.data.frame(num_data[complete.cases(sub),])
+
+#Create Factor Variables
+for(i in 1:8) {
+  num_data[,i]=factor(num_data[,i])
+  levels(num_data[,i])=c("1","2","3","4","5","6","7","8")
+}
+```
+
+##Q4: How easy is it to find the application and application requirements?
+
+###Overall Responses
+
+```{r echo=FALSE, message=FALSE}
+#Histogram for Question 4
+g=(ggplot(full.complete,aes(x=Q4_1))
+  +geom_histogram(fill="dodger blue")
+  +ggtitle("Q4: How easy is it to find the application and application requirements?")
+  +xlab("Difficulty Score (0=Very Easy, 100=Very Difficult)")
+  +ylab("Count"))
+g
+```
+
+```{r include=FALSE}
+wilcox.test(full.complete$Q4_1,mu=50)
+# full.complete$Affiliation2=full.complete$Affiliation
+# full.complete$Affiliation2[full.complete$Affiliation2=="Master's Student"]="Master's Students"
+# full.complete$Affiliation2[full.complete$Affiliation2=="Undergraduate"]="Undergraduate Students"
+wilcox.test(full.complete$Q4_1[full.complete$Affiliation=="Master's Student"],
+            full.complete$Q4_1[full.complete$Affiliation=="Undergraduate"])
+```
+
+
+
+**Interpretation**: The distribution of scores is bimodal, with most students indicating it was either very easy or very difficult to find the application. A Wilcoxon Ranked-Sum Test was carried out to test if the distribution was symmetric around a score of 50. This test yielded a p-value of 0.3336, which suggests the distribution is in fact centered around a score of 50 (since the p-value is greater than the 0.05 significance level). 
+
+###Responses by Student Affiliation
+
+```{r echo=FALSE, message=FALSE}
+g+facet_grid(Affiliation~.)
+```
+
+
+```{r}
+whole_plot = g
+stratify_plot = g+facet_grid(Affiliation~.)
+Open_Q4 = list(whole_plot, stratify_plot)
+names(Open_Q4) = c("whole_plot", "stratify_plot")
+# saveRDS(Open_Q4, "results/Open_Q4.rds")
+```
+
+
+**Interpretation**: The distribution of scores from Master's students appears very similar to the distribution of scores from Undergraduate students. A Wilcoxon Rank-Sum Test was carried out to test if these distributions are the same. This test yielded a p-value of 0.5558, which suggests the scores do not differ significantly between Master's and Undergraduate studenys (since the p-value is greater than the 0.05 significance level).
+
+##Q7: When you thought about applying to Michigan Public Health, which information was the most important to you?
+
+###Overall Responses
+
+```{r echo=FALSE}
+#Overall Likert Plot
+like_open=likert(num_data)
+like_open_plot <- (plot(like_open,low.color="#5AB4AC",high.color="#D8B365")
++ggtitle("Q7: When you thought about applying to Michigan Public Health, \n which information was the most important to you?")
++ guides(fill=guide_legend("Rank")))
+```
+
+```{r echo=FALSE}
+#Wilcoxon Signed-Rank Test
+p.vals1=vector("numeric")
+p.vals2=vector("numeric")
+for(i in 1:length(names(num_data))) {
+  p.vals1[i]=wilcox.test(as.numeric(num_data[,i]),mu=4.5)[[3]]
+  p.vals2[i]=wilcox.test(as.numeric(num_data[affiliation=="Master's Student",i]), as.numeric(num_data[affiliation=="Undergraduate",i]))[[3]]
+}
+```
+
+| Category | P-Value |
+| -------- | ------- |
+| Location |     <0.0001    |
+| Faculty Information |    <0.0001     |
+| Student Life |     0.0004    | 
+| Financial Aid (Scholarships and Funding) |    0.0844     |
+| Department-Specific Information |    0.0026     |
+| Career Outcomes |    <0.0001     |
+| Degree Requirements |    <0.0001     |
+| Research Areas/Areas of Study |    <0.0001     |
+
+Table: Wilcoxon Signed-Rank Test Results. A p-value greater than 0.05 indicates that the ranks are symmetric around the middle value of 4.5. 
+
+**Interpretation**: Research Areas, Degree Requirements, Career Outcomes, and Department-Specific Information were ranked as the most important considerations when applying to Michigan Public Health. Location, Faculty, and Student Life tended to be ranked lower in terms of importance. Financial Aid received a fairly even mix of high and low rankings, and the results of the Wilcoxon-Signed Rank Tests suggest that it is the only category with ranks symmetric around the middle value of 4.5. 
+
+###Responses by Student Affiliation
+
+```{r echo=FALSE, fig.height=8}
+#Likert Plot By Affiliation
+like_open_aff=likert(num_data,grouping=affiliation)
+(plot(like_open_aff,low.color="#5AB4AC",high.color="#D8B365")
+  +ggtitle("Q7: When you thought about applying to Michigan Public Health, \n which information was the most important to you?")
+  + guides(fill=guide_legend("Rank")))
+```
+
+| Category | P-Value |
+| -------- | ------- |
+| Location |     0.2175   |
+| Faculty Information |    0.0312     |
+| Student Life |     0.0212    | 
+| Financial Aid (Scholarships and Funding) |    0.1869     |
+| Department-Specific Information |    0.0114    |
+| Career Outcomes |    0.0003    |
+| Degree Requirements |    0.2121    |
+| Research Areas/Areas of Study |    0.2234     |
+
+Table: Wilcoxon Rank-Sum Test Results. A p-value greater than 0.05 indicates that there are no significant differences between the Undergraduate and Master's student rankings. 
+
+**Interpretation**: Undergraduate students rank Career Outcomes and Student Life as significantly more important than Master's students do. Master's students rank Faculty Information and Department-Specific Information as significantly more important than Undergraduate students do. This is observed in both the figure and the Wilcoxon Ranked-Sum Tests.
+
+
+
+
+
+
+
+
+
+
+

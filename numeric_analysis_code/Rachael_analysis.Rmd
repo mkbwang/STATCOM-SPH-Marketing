@@ -1,0 +1,314 @@
+---
+title: "SPH Website Survey Analysis"
+author: "Rachael Beer"
+date: "6/7/2020"
+output:
+  html_document: default
+  pdf_document: default
+subtitle: Data from PH200, PH514, PH516, S_15
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+We start by reading in data and combining all "closed" surveys.
+
+```{r include=TRUE}
+#load libraries
+library(haven)
+library(dplyr)
+library(ggplot2)
+
+#set working directory
+setwd("~/UM/Biostatistics/STATCOM/raw_data")
+
+#read in data files
+#user surveys- sent out to students taking classes at SPH
+s_15 = read_sav("Website User Survey_May 22, 2020_15.01.sav")
+ph200 = read_sav("Website User Survey - Public Health 200_May 22, 2020_15.02.sav")
+ph514 = read_sav("Website User Survey - Public Health 514_May 22, 2020_15.03.sav")
+ph516 = read_sav("Website User Survey - Public Health 516_May 22, 2020_15.04.sav")
+
+#keep relevant variables
+ph200 = select(ph200, Progress, Finished, ResponseId, Affiliation, School, Q1_1, Q2, Q3, Q4, Q6, Q7, Q8, Q9, Q10, Q11, Q12_1, Q12_2, Q12_3, Q12_4, Q12_5, Q12_6, Q12_7, Q13, Q14, Q15, Q16, Q17, Q17_1_TEXT, Q17_2_TEXT, Q17_3_TEXT, Q17_4_TEXT)
+ph514 = select(ph514, Progress, Finished, ResponseId, Affiliation, Q1_1, Q2, Q3, Q4, Q6, Q7, Q8, Q9, Q10, Q11, Q12_1, Q12_2, Q12_3, Q12_4, Q12_5, Q12_6, Q12_7, Q13, Q14, Q15, Q16, Q17, Q17_1_TEXT, Q17_2_TEXT, Q17_3_TEXT, Q17_4_TEXT)
+ph516 = select(ph516, Progress, Finished, ResponseId, Affiliation, Q1_1, Q2, Q3, Q4, Q6, Q7, Q8, Q9, Q10, Q11, Q12_1, Q12_2, Q12_3, Q12_4, Q12_5, Q12_6, Q12_7, Q13, Q14, Q15, Q16, Q17, Q17_1_TEXT, Q17_2_TEXT, Q17_3_TEXT, Q17_4_TEXT)
+s_15 = select(s_15, Q2, Q13, Q14, Q15)
+
+#create identifier
+ph200$id = "ph200"
+ph514$id = "ph514"
+ph516$id = "ph516"
+s_15$id = "s_15"
+
+#create school variable for the datasets which don't have them
+ph514$School = NA_real_
+ph516$School = NA_real_
+s_15$School = NA_real_
+
+#create the missing variables in s_15 dataset
+s_15$Progress = NA_real_
+s_15$Finished = NA_real_
+s_15$ResponseId = NA
+s_15$Affiliation = 3
+s_15$Q1_1 = NA_real_
+s_15$Q3 = NA
+s_15$Q4 = NA
+s_15$Q6 = NA
+s_15$Q7 = NA
+s_15$Q8 = NA
+s_15$Q9 = NA
+s_15$Q10 = NA
+s_15$Q11 = NA
+s_15$Q12_1 = NA_real_
+s_15$Q12_2 = NA_real_
+s_15$Q12_3 = NA_real_
+s_15$Q12_4 = NA_real_
+s_15$Q12_5 = NA_real_
+s_15$Q12_6 = NA_real_
+s_15$Q12_7 = NA_real_
+s_15$Q16 = NA
+s_15$Q17 = NA_real_
+s_15$Q17_1_TEXT = NA
+s_15$Q17_2_TEXT = NA
+s_15$Q17_3_TEXT = NA
+s_15$Q17_4_TEXT = NA
+
+#stack the datasets
+classes = rbind(ph514, ph516, ph200, s_15)
+```
+
+For ease of use, we create a factor variable for the student's affiliation.
+
+```{r include = TRUE}
+#change affiliation to factor
+classes$aff[classes$Affiliation == 1] = "Undergraduate"
+classes$aff[classes$Affiliation == 2] = "Master's Student"
+classes$aff[classes$Affiliation == 3] = "Unknown"
+
+```
+
+### Q1: What is your overall impression of our website?
+
+First, we can examine the average rating of the SPH website, overall and by the student's affiliation.
+
+```{r}
+summary(classes$Q1_1)
+#affiliation = 1 (undergrad), 2 (masters), 3 (unknown)
+tapply(classes$Q1_1, classes$aff, summary)
+```
+
+The average rating of the SPH website is 84/100. The average rating from undergrads is 88/100 and average rating from master's students is 81/100.
+
+
+Next, we create rating categories which will be used in the graphical analysis of Q1.
+
+```{r}
+
+#create categories for Q1
+classes$Q1_c[classes$Q1_1 < 60] = 1 
+classes$Q1_c[classes$Q1_1 >= 60 & classes$Q1_1 < 70] = 2
+classes$Q1_c[classes$Q1_1 >= 70 & classes$Q1_1 < 80] = 3
+classes$Q1_c[classes$Q1_1 >= 80 & classes$Q1_1 < 90] = 4
+classes$Q1_c[classes$Q1_1 >= 90] = 5
+```
+
+We show a bar plot of how many students rated the SPH wesbite in each category.
+
+```{r}
+#overall
+Q1_whole = ggplot(data=classes, aes(x=as.factor(Q1_c))) + geom_bar(fill = "snow3") + 
+        ylim(0,20) +
+        ylab("Frequency")+ 
+        ggtitle("Overall impression of the website (0-100)") +
+        scale_x_discrete(name="Rating", limits=c("1", "2", "3", "4", "5"), labels=c("<60","60-69","70-79","80-89","90-100")) + 
+        theme_classic()
+```
+
+Most students rated the website very highly at 80/100 or higher.
+
+We can also break this down by the student's affiliation.
+
+```{r}
+#by affiliation
+Q1_stratify = ggplot(data=classes, aes(x=as.factor(Q1_c))) + geom_bar(aes(fill=aff)) + 
+        ylim(0,20) +
+        ylab("Frequency")+ 
+        ggtitle("Overall impression of the website (0-100)") +
+        scale_x_discrete(name="Rating", limits=c("1", "2", "3", "4", "5"), labels=c("<60","60-69","70-79","80-89","90-100")) + 
+        labs(fill = "Affiliation") +
+        scale_fill_brewer(palette="Pastel1") +
+        theme_classic()
+```
+
+Most undergaduate students rated the website at 90/100 or above. There was a wider distribution in the ratings from Master's students, but most Master's students rated the SPH website at 80/100 or above.
+
+### Q12: When gathering information on schools, which information is the most important and which information is the least important for you? Rank answers from 1-7 (1 is most important). See rank_question_closedsurveys.r
+
+The analysis for question 12 is in rank_question_closed.r.
+
+### Q13: What form of student testimonial is the most engaging to you?
+
+We show a bar plot of how many students selected each form of student testimonial.
+
+```{r}
+#overall
+whole_q13 = ggplot(data=classes, aes(x=as.factor(Q13))) + geom_bar(fill = "snow3") + 
+        ylim(0,25) +
+        ylab("Frequency")+ 
+        ggtitle("Most Engaging Form of Student Testimonial") +
+        scale_x_discrete(name="", limits=c("1", "2", "3", "4"), labels=c("Video", "Quote", "Image", "Student Profile")) + 
+        theme_classic()
+```
+
+Most students selected "student profile" as the most engaging, followed by videos.
+
+We can also break this down by the student's affiliation.
+
+```{r}
+#by affiliation
+stratify_13 = ggplot(data=classes, aes(x=as.factor(Q13))) + geom_bar(aes(fill=aff)) + 
+        ylim(0,25) +
+        ylab("Frequency")+ 
+        ggtitle("Most Engaging Form of Student Testimonial") +
+        scale_x_discrete(name="", limits=c("1", "2", "3", "4"), labels=c("Video", "Quote", "Image", "Student Profile")) + 
+        labs(fill = "Affiliation") +
+        scale_fill_brewer(palette="Pastel1") +
+        theme_classic()
+```
+
+Master's students preferred student profiles, followed by videos, images, and lastly, qutoes. Undergraduates, on the other hand, preferred videos, followed by student profiles, quotes, and images. The unknown affiliation students are those who filled out the s_15 survey. These students preferred student profiles.
+
+### Q14: How likely are you to click on or download a PDF containing information about programs and requirements?
+
+We show a barplot of how many students selected each item on the Likert scale.
+
+
+```{r}
+#overall
+whole_14 = ggplot(data=classes, aes(x=as.factor(Q14))) + geom_bar(fill = "snow3") + 
+        ylim(0,30) +
+        ylab("Frequency")+ 
+        ggtitle("Likelihood of clicking on / downloading PDF about programs and requirements") +
+        scale_x_discrete(name="", limits=c("1", "2", "3", "4"), labels=c("Very Likely", "Likely", "Unlikely", "Very Unlikely")) + 
+        theme_classic()
+```
+
+Most students responded that they would be "very likely" or "likely" to click on/download a PDF about programs and requirements.
+
+We can also break this down by the student's affiliation.
+
+```{r}
+#by affiliation
+stratify_14 = ggplot(data=classes, aes(x=as.factor(Q14))) + geom_bar(aes(fill=aff)) + 
+        ylim(0,30) +
+        ylab("Frequency")+ 
+        ggtitle("Likelihood of clicking on / downloading PDF about programs and requirements") +
+        scale_x_discrete(name="", limits=c("1", "2", "3", "4"), labels=c("Very Likely", "Likely", "Unlikely", "Very Unlikely")) +
+        labs(fill = "Affiliation") +
+        scale_fill_brewer(palette="Pastel1") +
+        theme_classic()
+```
+
+The same held true by student's affiliation, which the exception of students with unknown affiliation.
+
+### Q15: Would a sample schedule and/or curriculum information be helplful in your decision making process?
+
+We show a bar plot of how many students selected each item in the Likert scale.
+
+```{r}
+#overall
+whole_15 = ggplot(data=classes, aes(x=as.factor(Q15))) + geom_bar(fill = "snow3") + 
+        ylim(0,50) +
+        ylab("Frequency")+ 
+        ggtitle("Sample schedule and/or curriculum information in decision making process") +
+        scale_x_discrete(name="", limits=c("1", "2"), labels=c("Very Helpful", "Helpful")) + 
+        theme_classic()
+```
+
+All students selected that a sample schedule or curriculum information would be very helpful or helpful in their decision making process, and the vast majority thought this would be very helpful.
+
+We can also break this down by the student's affiliation.
+
+```{r}
+#by affiliation
+stratify_15 = ggplot(data=classes, aes(x=as.factor(Q15))) + geom_bar(aes(fill=aff)) + 
+        ylim(0,50) +
+        ylab("Frequency")+ 
+        ggtitle("Sample schedule and/or curriculum information in decision making process") +
+        scale_x_discrete(name="", limits=c("1", "2"), labels=c("Very Helpful", "Helpful")) +
+        labs(fill = "Affiliation") +
+        scale_fill_brewer(palette="Pastel1") +
+        theme_classic()
+```
+
+The same holds true when broken down by student's affiliation.
+
+## Q17: Besides a website, where else would you look for information about a school when applying?
+
+We show a bar plot of how many students selected each other mode of information.
+
+```{r}
+#overall
+whole_17 = ggplot(data=classes, aes(x=as.factor(Q17))) + geom_bar(fill = "snow3") + 
+        ylim(0,25) +
+        ylab("Frequency")+ 
+        ggtitle("Where else would you look for information when applying to a school?") +
+        scale_x_discrete(name="", limits=c("1", "2", "3", "4"), labels=c("Social Media", "Print Material", "Other websites", "Other")) + 
+        theme_classic()
+```
+
+Most students selected social media as another place they would look for information when applying to a school, but a fair number also selected "other websites". Not many students selected "print material" or "other".
+
+We can also break this down my the student's affiliation.
+
+```{r}
+#by affiliation
+stratify_17 = ggplot(data=classes, aes(x=as.factor(Q17))) + geom_bar(aes(fill=aff)) + 
+        ylim(0,25) +
+        ylab("Frequency")+ 
+        ggtitle("Where else would you look for information when applying to a school?") +
+        scale_x_discrete(name="", limits=c("1", "2", "3", "4"), labels=c("Social Media", "Print Material", "Other websites", "Other")) +
+        labs(fill = "Affiliation") +
+        scale_fill_brewer(palette="Pastel1") +
+        theme_classic()
+```
+
+The overall analysis held true for Master's students, but undergraduates preferred social media, with just 1 or 2 students selecting each of the other options.
+
+We can also look at where specifically students said they would look at for information about a school when applying.
+
+```{r include = TRUE}
+#social media
+summary(as.factor(classes$Q17_1_TEXT))
+```
+
+Social media included Instagram (7), Twitter (3), and Facebook (1). One person cited that social media helps get a sense of the department culture.
+
+```{r}
+#print material
+summary(as.factor(classes$Q17_2_TEXT))
+```
+
+Print material included flyers and brochures (1).
+
+```{r}
+#Other websites
+summary(as.factor(classes$Q17_3_TEXT))
+```
+
+Other websites included the ASPH (1), Google (1), and school ranking websites (1). 
+
+```{r}
+#Other
+summary(as.factor(classes$Q17_4_TEXT))
+```
+
+Other sources included contacting faculty members (1) and current students (3) and school ranking websites (1). 
+
+
+
+
+
+

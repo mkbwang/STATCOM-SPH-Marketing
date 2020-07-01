@@ -1,0 +1,758 @@
+---
+title: "STATCOM SPH Market Survery Report"
+output: 
+  flexdashboard::flex_dashboard:
+    vertical_layout: scroll
+    orientation: rows
+    theme: cosmo
+---
+
+```{r, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(plotly)
+setwd("~/UM/Biostatistics/STATCOM")
+```
+
+
+
+
+
+Question 1: How difficult was it to find the info you wanted on our site?(Open Response) {data-navmenu="Open Surveys"}
+=====================================  
+
+Row
+-------------------------------------
+
+
+### Keywords
+
+```{r}
+elements_open_Q1 = readRDS("results/Open_Q1.rds")
+kable(elements_open_Q1$top_10_words)
+```
+
+### Topic Examples
+
+```{r}
+kable(elements_open_Q1$example)
+```
+
+
+Row
+-------------------------------------
+
+### Overall Prevalence of Topics
+
+```{r}
+ggplotly(elements_open_Q1$whole_plot)
+```
+
+### Comparison between Undergrad and Graduate Students
+
+```{r}
+ggplotly(elements_open_Q1$stratified_plot)
+```
+
+
+
+
+
+
+Question 2: What info was difficult to find or missing?(Open Response) {data-navmenu="Open Surveys"}
+=====================================  
+
+
+Row
+-------------------------------------
+
+### Keywords
+
+```{r}
+elements_open_Q2 = readRDS("results/Open_Q2.rds")
+kable(elements_open_Q2$top_10_words)
+```
+
+### Topic Examples
+
+```{r}
+kable(elements_open_Q2$example)
+```
+
+Row 
+-------------------------------------
+
+
+### Overall Prevalence of Topics
+```{r}
+ggplotly(elements_open_Q2$whole_plot)
+```
+
+
+### Comparison Between Undergrad and Grad Students
+```{r}
+ggplotly(elements_open_Q2$stratified_plot)
+```
+
+
+
+Question 3: What would you like to see more of on the website?(Open Response) {data-navmenu="Open Surveys"}
+=====================================  
+
+Row
+-------------------------------------
+
+### Keywords
+
+```{r}
+elements_open_Q3 = readRDS("results/Open_Q3.rds")
+kable(elements_open_Q3$top_10_words)
+```
+
+
+### Topic Examples
+
+```{r}
+kable(elements_open_Q3$example)
+```
+
+Row 
+-------------------------------------
+
+### Overall Prevalence of Topics
+```{r}
+ggplotly(elements_open_Q3$whole_plot)
+```
+
+
+### Comparison Between Undergrad and Grad Students
+```{r}
+ggplotly(elements_open_Q3$stratified_plot)
+```
+
+
+Question 4: How easy is it to find the application and application requirements?(numeric) {data-navmenu="Open Surveys"}
+===================================== 
+
+
+Column
+-------------------------------------
+
+### Distribution of All the scores
+
+```{r}
+elements_open_Q4 = readRDS("results/Open_Q4.rds")
+ggplotly(elements_open_Q4$whole_plot)
+```
+
+
+### Distribution of Scores in Different Affiliations
+
+```{r}
+ggplotly(elements_open_Q4$stratify_plot)
+```
+
+
+Column
+-------------------------------------
+
+### Interpretation
+
+The distribution of scores from Master's students appears very similar to the distribution of scores from Undergraduate students. A Wilcoxon Rank-Sum Test was carried out to test if these distributions are the same. This test yielded a p-value of 0.5558, which suggests the scores do not differ significantly between Master's and Undergraduate students (since the p-value is greater than the 0.05 significance level).
+
+
+Question 5: Besides a website, what other media do you look at when thinking about applying to a school or program? (Open Response) {data-navmenu="Open Surveys"}
+=====================================  
+
+Row
+-------------------------------------
+
+### Keywords
+
+```{r}
+elements_open_Q5 = readRDS("results/Open_Q5.rds")
+kable(elements_open_Q5$top_10_words)
+```
+
+### Topic Examples
+
+```{r}
+kable(elements_open_Q5$example)
+```
+
+Row
+-------------------------------------
+
+### Overall Prevalence of Topics
+```{r}
+ggplotly(elements_open_Q5$whole_plot)
+```
+
+
+### Comparison Between Undergrad and Grad Students
+```{r}
+ggplotly(elements_open_Q5$stratified_plot)
+```
+
+
+Question 6: What information was most important to you when thinking about which grad school to apply to? (Open Response) {data-navmenu="Open Surveys"}
+===================================== 
+
+Row
+-------------------------------------
+
+### Keywords
+
+```{r}
+elements_open_Q6 = readRDS("results/Open_Q6.rds")
+kable(elements_open_Q6$top_10_words)
+```
+
+### Topic Examples
+
+```{r}
+kable(elements_open_Q6$example)
+```
+
+Row
+-------------------------------------
+
+### Overall Prevalence of Topics
+```{r}
+ggplotly(elements_open_Q6$whole_plot)
+```
+
+
+### Comparison Between Undergrad and Grad Students
+```{r}
+ggplotly(elements_open_Q6$stratified_plot)
+```
+
+
+Question 7: When you thought about applying to Michigan Public Health which Information was the most important to you?(rank) {data-navmenu="Open Surveys"}
+===================================== 
+
+Row
+-------------------------------------
+
+### Likert Plot
+
+```{r}
+elements_open_Q7 = readRDS("results/Open_Q7.rds")
+ggplotly(elements_open_Q7)
+```
+
+Row
+-------------------------------------
+
+
+### Overall Responses
+
+| Category | P-Value |
+| -------- | ------- |
+| Location |     <0.0001    |
+| Faculty Information |    <0.0001     |
+| Student Life |     0.0004    | 
+| Financial Aid (Scholarships and Funding) |    0.0844     |
+| Department-Specific Information |    0.0026     |
+| Career Outcomes |    <0.0001     |
+| Degree Requirements |    <0.0001     |
+| Research Areas/Areas of Study |    <0.0001     |
+
+Table: Wilcoxon Signed-Rank Test Results. A p-value greater than 0.05 indicates that the ranks are symmetric around the middle value of 4.5. 
+
+**Interpretation**: Research Areas, Degree Requirements, Career Outcomes, and Department-Specific Information were ranked as the most important considerations when applying to Michigan Public Health. Location, Faculty, and Student Life tended to be ranked lower in terms of importance. Financial Aid received a fairly even mix of high and low rankings, and the results of the Wilcoxon-Signed Rank Tests suggest that it is the only category with ranks symmetric around the middle value of 4.5. 
+
+
+### Responses by Student Affiliation
+
+| Category | P-Value |
+| -------- | ------- |
+| Location |     0.2175   |
+| Faculty Information |    0.0312     |
+| Student Life |     0.0212    | 
+| Financial Aid (Scholarships and Funding) |    0.1869     |
+| Department-Specific Information |    0.0114    |
+| Career Outcomes |    0.0003    |
+| Degree Requirements |    0.2121    |
+| Research Areas/Areas of Study |    0.2234     |
+
+Table: Wilcoxon Rank-Sum Test Results. A p-value greater than 0.05 indicates that there are no significant differences between the Undergraduate and Master's student rankings. 
+
+**Interpretation**: Undergraduate students rank Career Outcomes and Student Life as significantly more important than Master's students do. Master's students rank Faculty Information and Department-Specific Information as significantly more important than Undergraduate students do. This is observed in both the figure and the Wilcoxon Ranked-Sum Tests.
+
+Question 1:  What is your overall impression of our website?(Numeric) {data-navmenu="In Class Surveys"}
+===================================== 
+
+Row
+-------------------------------------
+
+### Overall Rating
+
+```{r}
+elements_class_Q1 = readRDS("results/Class_Q1.rds")
+ggplotly(elements_class_Q1[[1]])
+```
+
+
+### Rating by Affiliation
+
+```{r}
+ggplotly(elements_class_Q1[[2]])
+```
+
+Row
+-------------------------------------
+
+### Interpretation
+
+The average rating of the SPH website is 84/100. The average rating from undergrads is 88/100 and average rating from master's students is 81/100. Most undergaduate students rated the website at 90/100 or above. There was a wider distribution in the ratings from Master's students, but most Master's students rated the SPH website at 80/100 or above.
+
+
+Question 2: What do you like least/most about our website?(Open Response) {data-navmenu="In Class Surveys"}
+===================================== 
+
+Row
+-------------------------------------
+
+### Keywords
+
+```{r}
+elements_class_Q2 = readRDS("results/Class_Q2.rds")
+kable(elements_class_Q2$top_10_words)
+```
+
+### Topic Examples
+
+```{r}
+kable(elements_class_Q2$example)
+```
+
+Row
+-------------------------------------
+
+### Overall Prevalence of Topics
+```{r}
+ggplotly(elements_class_Q2$whole_plot)
+```
+
+
+### Comparison Between Undergrad and Grad Students
+```{r}
+ggplotly(elements_class_Q2$stratified_plot)
+```
+
+
+Question 3: What kind of things (videos, images, etc) do you like to see on a website’s homepage?(Open Response) {data-navmenu="In Class Surveys"}
+===================================== 
+
+Row
+-------------------------------------
+
+### Keywords
+
+```{r}
+elements_class_Q3 = readRDS("results/Class_Q3.rds")
+kable(elements_class_Q3$top_10_words)
+```
+
+### Topic Examples
+
+```{r}
+kable(elements_class_Q3$example)
+```
+
+Row
+-------------------------------------
+
+### Overall Prevalence of Topics
+```{r}
+ggplotly(elements_class_Q3$whole_plot)
+```
+
+
+### Comparison Between Undergrad and Grad Students
+```{r}
+ggplotly(elements_class_Q3$stratified_plot)
+```
+
+
+Question 4: How would you describe the quality of the mobile/phone experience?(Open Response) {data-navmenu="In Class Surveys"}
+===================================== 
+
+Row
+-------------------------------------
+
+### Keywords
+
+```{r}
+elements_class_Q4 = readRDS("results/Class_Q4.rds")
+kable(elements_class_Q4$top_10_words)
+```
+
+### Topic Examples
+
+```{r}
+kable(elements_class_Q4$example)
+```
+
+Row
+-------------------------------------
+
+### Overall Prevalence of Topics
+```{r}
+ggplotly(elements_class_Q4$whole_plot)
+```
+
+
+### Comparison Between Undergrad and Grad Students
+```{r}
+ggplotly(elements_class_Q4$stratified_plot)
+```
+
+
+Question 6: What are the most important questions that our website should answer for students who want to attend Michigan Public Health?(Open Response) {data-navmenu="In Class Surveys"}
+=====================================
+
+Row
+-------------------------------------
+
+### Keywords
+
+```{r}
+elements_class_Q6 = readRDS("results/Class_Q6.rds")
+kable(elements_class_Q6$top_10_words)
+```
+
+### Topic Examples
+
+```{r}
+kable(elements_class_Q6$example)
+```
+
+Row
+-------------------------------------
+
+### Overall Prevalence of Topics
+```{r}
+ggplotly(elements_class_Q6$whole_plot)
+```
+
+
+### Comparison Between Undergrad and Grad Students
+```{r}
+ggplotly(elements_class_Q6$stratified_plot)
+```
+
+
+Question 7: Is information about becoming a student at Michigan Public Health easy to find? (Open Response) {data-navmenu="In Class Surveys"}
+=====================================
+
+Row
+-------------------------------------
+
+### Keywords
+
+```{r}
+elements_class_Q7 = readRDS("results/Class_Q7.rds")
+kable(elements_class_Q7[[1]])
+```
+
+### Examples
+
+```{r}
+kable(elements_class_Q7[[2]])
+```
+
+
+Question 8: Is information about becoming a student at Michigan Public Health easy to understand? (Open Response) {data-navmenu="In Class Surveys"}
+=====================================
+
+Row
+-------------------------------------
+
+### Keywords
+
+```{r}
+elements_class_Q8 = readRDS("results/Class_Q8.rds")
+kable(elements_class_Q8[[1]])
+```
+
+### Examples
+
+```{r}
+kable(elements_class_Q8[[2]])
+```
+
+
+Question 9: How difficult is it to find information about scholarships, funding, and/or financial aid information on the website? (Open Response) {data-navmenu="In Class Surveys"}
+=====================================
+
+Row
+-------------------------------------
+
+### Keywords
+
+```{r}
+elements_class_Q9 = readRDS("results/Class_Q9.rds")
+kable(elements_class_Q9[[1]])
+```
+
+### Examples
+
+```{r}
+kable(elements_class_Q9[[2]])
+```
+
+
+Question 10: What features or content can we change or improve that would make it easier to find important prospective and admitted student information on our website? (Open Response) {data-navmenu="In Class Surveys"}
+=====================================
+
+Row
+-------------------------------------
+
+### Keywords
+
+```{r}
+elements_class_Q10 = readRDS("results/Class_Q10.rds")
+kable(elements_class_Q10$top_10_words)
+```
+
+### Topic Examples
+
+```{r}
+kable(elements_class_Q10$example)
+```
+
+Row
+-------------------------------------
+
+### Overall Prevalence of Topics
+```{r}
+ggplotly(elements_class_Q10$whole_plot)
+```
+
+
+### Comparison Between Undergrad and Grad Students
+```{r}
+ggplotly(elements_class_Q10$stratified_plot)
+```
+
+
+Question 11: What should they know about living in Ann Arbor? (Open Response) {data-navmenu="In Class Surveys"}
+=====================================
+
+Row
+-------------------------------------
+
+### Keywords
+
+```{r}
+elements_class_Q11 = readRDS("results/Class_Q11.rds")
+kable(elements_class_Q11$top_10_words)
+```
+
+### Topic Examples
+
+```{r}
+kable(elements_class_Q11$example)
+```
+
+Row
+-------------------------------------
+
+### Overall Prevalence of Topics
+```{r}
+ggplotly(elements_class_Q11$whole_plot)
+```
+
+
+### Comparison Between Undergrad and Grad Students
+```{r}
+ggplotly(elements_class_Q11$stratified_plot)
+```
+
+
+Question 12: When gathering information on schools, which information is the most important and which is less important to you? (Rank) {data-navmenu="In Class Surveys"}
+=====================================
+
+Row
+-------------------------------------
+### Overall Likert Score
+
+```{r}
+elements_class_Q12 = readRDS("results/Class_12.rds")
+ggplotly(elements_class_Q12[[1]])
+```
+
+Row
+-------------------------------------
+### Likert Score by Affiliation
+
+```{r}
+ggplotly(elements_class_Q12[[2]])
+```
+
+
+Row
+-------------------------------------
+### Interpretation
+Students replied that degree requirements were the most important to them, followed by career outcomes, research areas/areas of study, financial aid, and department specific information. Student life and faculty information often ranked below a 4.
+
+This analysis changes when we look at the student's affiliation. 
+Career outcomes were more important to Master's students than undergraduates, as were degree requirements and department-specific information.
+Faculty information was about equally important to undergraduates and Master's students.
+Financial aid information was more important to undergraduates than Master's students, as were research areas/areas of study and student life.
+
+Degree requirements, career outcomes, and department-specific information were the most important factors to Master's students.
+Student life and faculty information were the least important to Master's students.
+
+Research areas/areas of study, financial aid, degree requirements were the most important factors to undergraduates.
+Student life, faculty information, and department-specific information were the least important factors to undergraduates.
+
+
+
+Question 13: What form of student testimonial is the most engaging to you? (Choice) {data-navmenu="In Class Surveys"}
+=====================================
+
+Row
+-------------------------------------
+
+### Overall Score
+
+```{r}
+elements_class_Q13 = readRDS("results/Class_Q13.rds")
+ggplotly(elements_class_Q13[[1]])
+```
+
+
+### Score by Affiliation
+
+```{r}
+ggplotly(elements_class_Q13[[2]])
+```
+
+Row
+-------------------------------------
+
+### Interpretation
+
+Most students selected "student profile" as the most engaging, followed by videos. Master's students preferred student profiles, followed by videos, images, and lastly, qutoes. Undergraduates, on the other hand, preferred videos, followed by student profiles, quotes, and images. The unknown affiliation students are those who filled out the s_15 survey. These students preferred student profiles.
+
+
+Question 14: How likely are you to click on or download a PDF containing information about programs and requirements?(choice){data-navmenu="In Class Surveys"}
+=====================================
+
+Row
+-------------------------------------
+
+### Overall Score
+
+```{r}
+elements_class_Q14 = readRDS("results/Class_Q14.rds")
+ggplotly(elements_class_Q14[[1]])
+```
+
+
+### Score by Affiliation
+
+```{r}
+ggplotly(elements_class_Q14[[2]])
+```
+
+Row
+-------------------------------------
+### Interpretation
+
+Most students responded that they would be "very likely" or "likely" to click on/download a PDF about programs and requirements.The same held true by student's affiliation, which the exception of students with unknown affiliation.
+
+
+Question 15: Would a sample schedule and/or curriculum information be helplful in your decision making process?(choice){data-navmenu="In Class Surveys"}
+=====================================
+
+Row
+-------------------------------------
+
+### Overall Score
+
+```{r}
+elements_class_Q15 = readRDS("results/Class_Q15.rds")
+ggplotly(elements_class_Q15[[1]])
+```
+
+
+### Score by Affiliation
+
+```{r}
+ggplotly(elements_class_Q15[[2]])
+```
+
+Row
+-------------------------------------
+### Interpretation
+
+All students selected that a sample schedule or curriculum information would be very helpful or helpful in their decision making process, and the vast majority thought this would be very helpful.
+The same holds true when broken down by student's affiliation.
+
+
+Question 16: How much did faculty members impact your choice to come to Michigan Public Health? (Open Response) {data-navmenu="In Class Surveys"}
+=====================================
+
+Row
+-------------------------------------
+
+### Keywords
+
+```{r}
+elements_class_Q16 = readRDS("results/Class_Q16.rds")
+kable(elements_class_Q16$top_10_words)
+```
+
+### Topic Examples
+
+```{r}
+kable(elements_class_Q16$example)
+```
+
+Row
+-------------------------------------
+
+### Overall Prevalence of Topics
+```{r}
+ggplotly(elements_class_Q16$whole_plot)
+```
+
+
+### Comparison Between Undergrad and Grad Students
+```{r}
+ggplotly(elements_class_Q16$stratified_plot)
+```
+
+
+Question 17: Besides a website, where else would you look for information about a school when applying? (Choice) {data-navmenu="In Class Surveys"}
+=====================================
+
+Row
+-------------------------------------
+
+### Overall Score
+
+```{r}
+elements_class_Q17 = readRDS("results/Class_Q17.rds")
+ggplotly(elements_class_Q17[[1]])
+```
+
+
+### Score by Affiliation
+
+```{r}
+ggplotly(elements_class_Q17[[2]])
+```
+
+Row
+-------------------------------------
+### Interpretation
+Most students selected social media as another place they would look for information when applying to a school, but a fair number also selected "other websites". Not many students selected "print material" or "other".
+The overall analysis held true for Master's students, but undergraduates preferred social media, with just 1 or 2 students selecting each of the other options.
+
+
