@@ -3,4 +3,4 @@ processed_data/
 raw_data/
 Survey\ Reports/
 .Rhistory
-
+*.html
