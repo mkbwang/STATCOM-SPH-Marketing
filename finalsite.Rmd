@@ -11,11 +11,32 @@ output:
 library(tidyverse)
 library(knitr)
 library(plotly)
+library(magick)
 setwd("~/UM/Biostatistics/STATCOM")
 ```
 
 
+About 
+=========================================
 
+### Title
+SPH website user survey report.
+
+<div>
+![Title](https://drive.google.com/file/d/1sQTCDRjDq-y_lLImrfx8U9Ch4cVN0eZH/view?usp=sharing)
+</div>
+
+
+### Data
+
+<div>
+![data](https://drive.google.com/file/d/1reooR7NWJI2R88Xr5-Zdozyd3N0d1VNK/view?usp=sharing)
+</div>
+
+### Analysis
+<div>
+![analysis](https://drive.google.com/file/d/1BbfHLzXFLdMLUIjTUzd7-Mj61-bmLI3h/view?usp=sharing)
+</div>
 
 
 Question 1: How difficult was it to find the info you wanted on our site?(Open Response) {data-navmenu="Open Surveys"}
@@ -235,12 +256,22 @@ Question 7: When you thought about applying to Michigan Public Health which Info
 Row
 -------------------------------------
 
-### Likert Plot
+### Overall Ranking Distribution
 
 ```{r}
 elements_open_Q7 = readRDS("results/Open_Q7.rds")
-ggplotly(elements_open_Q7)
+ggplotly(elements_open_Q7[[1]])
 ```
+
+Row {data-height=750}
+-------------------------------------
+
+### Rank Distribution by Student Affiliation
+
+```{r}
+ggplotly(elements_open_Q7[[2]])
+```
+
 
 Row
 -------------------------------------
@@ -581,11 +612,11 @@ Row
 ### Overall Likert Score
 
 ```{r}
-elements_class_Q12 = readRDS("results/Class_12.rds")
+elements_class_Q12 = readRDS("results/Class_Q12.rds")
 ggplotly(elements_class_Q12[[1]])
 ```
 
-Row
+Row {data-height=750}
 -------------------------------------
 ### Likert Score by Affiliation
 

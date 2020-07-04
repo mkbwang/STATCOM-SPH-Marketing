@@ -83,7 +83,7 @@ for(i in 1:7) {
 
 #Overall Likert Plot
 like_open=likert(num_data)
-like_open_plot = (plot(like_open)
+like_open_plot = (plot(like_open, low.color="#5AB4AC",high.color="#D8B365")
 +ggtitle("When gathering information on schools, \nwhich information is the most important to you?")
 + guides(fill=guide_legend("Rank")))
 
@@ -91,7 +91,7 @@ like_open_plot = (plot(like_open)
 
 #Likert Plot By Affiliation
 like_open_aff=likert(num_data,grouping=affiliation)
-like_open_affiliation = (plot(like_open_aff)
+like_open_affiliation = (plot(like_open_aff, low.color="#5AB4AC",high.color="#D8B365")
   +ggtitle("When gathering information on schools, \nwhich information is the most important to you?")
   + guides(fill=guide_legend("Rank")))
 
@@ -106,4 +106,4 @@ like_open_affiliation = (plot(like_open_aff)
 #Research areas/areas of study, financial aid, degree requirements were the most important factors to undergraduates.
 #Student life, faculty information, and department-specific information were the least important factors to undergraduates.
 
-saveRDS(list(like_open_plot, like_open_affiliation), file="../results/Class_12.rds")
+saveRDS(list(like_open_plot, like_open_affiliation), file="../results/Class_Q12.rds")

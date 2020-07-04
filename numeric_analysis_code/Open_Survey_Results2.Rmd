@@ -13,12 +13,12 @@ setwd('~/UM/Biostatistics/STATCOM/processed_data')
 
 
 #SPH
-sph <- read.csv("SPH_open_cleaned.csv") %>%  # One Data File
-  as_factor # Associate labels and factor levels with multiple choice questions
+sph <- read.csv("SPH_open_cleaned.csv", stringsAsFactors = FALSE) #%>%  # One Data File
+  # as_factor # Associate labels and factor levels with multiple choice questions
 
 #Duderstadt
-dude <- read.csv("Duderstadt_open_cleaned.csv") %>%  # One Data File
-  as_factor # Associate labels and factor levels with multiple choice questions
+dude <- read.csv("Duderstadt_open_cleaned.csv", stringsAsFactors = FALSE) #%>%  # One Data File
+  # as_factor # Associate labels and factor levels with multiple choice questions
 ```
 
 ```{r include=FALSE}
@@ -31,20 +31,18 @@ full.complete=full[complete.cases(full),]
 
 ```{r include=FALSE}
 #Extract Data for Likert
-sub=full[,c("Affiliation","Q7_1","Q7_2","Q7_3","Q7_4","Q7_5","Q7_6","Q7_7","Q7_8")]
-num_data=full[,c("Q7_1","Q7_2","Q7_3","Q7_4","Q7_5","Q7_6","Q7_7","Q7_8")]
-names(num_data)=c("Degree Requirements","Research Areas/Areas of Study",
-                  "Department-Specific Information","Career Outcomes","Faculty Information","Student Life",
-                  "Financial Aid (Scholarships and Funding)","Location")
-affiliation=sub[complete.cases(sub),]$Affiliation
-affiliation[affiliation=="Undergraduate"]="Undergraduate Students"
-affiliation[affiliation=="Master's Student"]="Master's Students"
-num_data=as.data.frame(num_data[complete.cases(sub),])
+sub=full.complete[,c("Affiliation","Q7_1","Q7_2","Q7_3","Q7_4","Q7_5","Q7_6","Q7_7","Q7_8")]
+num_data=full.complete[,c("Affiliation","Q7_1","Q7_2","Q7_3","Q7_4","Q7_5","Q7_6","Q7_7","Q7_8")]
+names(num_data)=c("Affiliation","Degree Requirements","Research Areas/Areas of Study",
+                  "Department-Specific Information","Career Outcomes","Faculty Information","Student Life","Financial Aid (Scholarships and Funding)","Location")
+# num_data=as.data.frame(num_data[complete.cases(sub),])
+# num_data$Affiliation[num_data$Affiliation=="Undergraduate"]="Undergraduate Students"
+# num_data$Affiliation[num_data$Affiliation=="Master's Student"]="Master's Students"
 
 #Create Factor Variables
-for(i in 1:8) {
+for(i in 2:9) {
   num_data[,i]=factor(num_data[,i])
-  levels(num_data[,i])=c("1","2","3","4","5","6","7","8")
+  levels(num_data[,i])=list("1"="1","2"="2","3"="3","4"="4","5"="5","6"="6","7"="7","8"="8")
 }
 ```
 
@@ -64,9 +62,8 @@ g
 
 ```{r include=FALSE}
 wilcox.test(full.complete$Q4_1,mu=50)
-# full.complete$Affiliation2=full.complete$Affiliation
-# full.complete$Affiliation2[full.complete$Affiliation2=="Master's Student"]="Master's Students"
-# full.complete$Affiliation2[full.complete$Affiliation2=="Undergraduate"]="Undergraduate Students"
+# full.complete$Affiliation[full.complete$Affiliation=="Undergraduate"]="Undergraduate Students"
+# full.complete$Affiliation[full.complete$Affiliation=="Master's Student"]="Master's Students"
 wilcox.test(full.complete$Q4_1[full.complete$Affiliation=="Master's Student"],
             full.complete$Q4_1[full.complete$Affiliation=="Undergraduate"])
 ```
@@ -81,16 +78,6 @@ wilcox.test(full.complete$Q4_1[full.complete$Affiliation=="Master's Student"],
 g+facet_grid(Affiliation~.)
 ```
 
-
-```{r}
-whole_plot = g
-stratify_plot = g+facet_grid(Affiliation~.)
-Open_Q4 = list(whole_plot, stratify_plot)
-names(Open_Q4) = c("whole_plot", "stratify_plot")
-# saveRDS(Open_Q4, "results/Open_Q4.rds")
-```
-
-
 **Interpretation**: The distribution of scores from Master's students appears very similar to the distribution of scores from Undergraduate students. A Wilcoxon Rank-Sum Test was carried out to test if these distributions are the same. This test yielded a p-value of 0.5558, which suggests the scores do not differ significantly between Master's and Undergraduate studenys (since the p-value is greater than the 0.05 significance level).
 
 ##Q7: When you thought about applying to Michigan Public Health, which information was the most important to you?
@@ -99,8 +86,8 @@ names(Open_Q4) = c("whole_plot", "stratify_plot")
 
 ```{r echo=FALSE}
 #Overall Likert Plot
-like_open=likert(num_data)
-like_open_plot <- (plot(like_open,low.color="#5AB4AC",high.color="#D8B365")
+like_open=likert(num_data[2:9])
+Q7_open_whole = (plot(like_open,low.color="#5AB4AC",high.color="#D8B365")
 +ggtitle("Q7: When you thought about applying to Michigan Public Health, \n which information was the most important to you?")
 + guides(fill=guide_legend("Rank")))
 ```
@@ -109,9 +96,9 @@ like_open_plot <- (plot(like_open,low.color="#5AB4AC",high.color="#D8B365")
 #Wilcoxon Signed-Rank Test
 p.vals1=vector("numeric")
 p.vals2=vector("numeric")
-for(i in 1:length(names(num_data))) {
-  p.vals1[i]=wilcox.test(as.numeric(num_data[,i]),mu=4.5)[[3]]
-  p.vals2[i]=wilcox.test(as.numeric(num_data[affiliation=="Master's Student",i]), as.numeric(num_data[affiliation=="Undergraduate",i]))[[3]]
+for(i in 2:length(names(num_data))) {
+  p.vals1[i-1]=wilcox.test(as.numeric(num_data[,i]),mu=4.5)[[3]]
+  p.vals2[i-1]=wilcox.test(as.numeric(num_data[num_data$Affiliation=="Master's Student",i]), as.numeric(num_data[num_data$Affiliation=="Undergraduate",i]))[[3]]
 }
 ```
 
@@ -134,8 +121,8 @@ Table: Wilcoxon Signed-Rank Test Results. A p-value greater than 0.05 indicates 
 
 ```{r echo=FALSE, fig.height=8}
 #Likert Plot By Affiliation
-like_open_aff=likert(num_data,grouping=affiliation)
-(plot(like_open_aff,low.color="#5AB4AC",high.color="#D8B365")
+like_open_aff=likert(num_data[2:9],grouping=num_data$Affiliation)
+Q7_open_str = (plot(like_open_aff,low.color="#5AB4AC",high.color="#D8B365")
   +ggtitle("Q7: When you thought about applying to Michigan Public Health, \n which information was the most important to you?")
   + guides(fill=guide_legend("Rank")))
 ```
@@ -158,7 +145,9 @@ Table: Wilcoxon Rank-Sum Test Results. A p-value greater than 0.05 indicates tha
 
 
 
-
+```{r}
+saveRDS(list(Q7_open_whole, Q7_open_str), file = "~/UM/Biostatistics/STATCOM/results/Open_Q7.rds")
+```
 
 
 
