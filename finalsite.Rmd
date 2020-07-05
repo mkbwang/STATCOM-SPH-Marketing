@@ -1,10 +1,11 @@
 ---
-title: "STATCOM SPH Market Survery Report"
+title: "SPH Website User Survey Report"
 output: 
   flexdashboard::flex_dashboard:
     vertical_layout: scroll
     orientation: rows
-    theme: cosmo
+    social: menu
+    source_code: embed
 ---
 
 ```{r, message=FALSE}
@@ -19,24 +20,48 @@ setwd("~/UM/Biostatistics/STATCOM")
 About 
 =========================================
 
+Row
+-------------------------------------
+
 ### Title
-SPH website user survey report.
 
-<div>
-![Title](https://drive.google.com/file/d/1sQTCDRjDq-y_lLImrfx8U9Ch4cVN0eZH/view?usp=sharing)
-</div>
+```{r }
+include_graphics("title.png") 
+```
 
 
-### Data
+Row
+-------------------------------------
 
-<div>
-![data](https://drive.google.com/file/d/1reooR7NWJI2R88Xr5-Zdozyd3N0d1VNK/view?usp=sharing)
-</div>
+### Data Summary
+
+```{r}
+include_graphics("data_summary.png") 
+```
+
+
+### Extra Comments on Data
+1. The data are provided by David Washington and Eric Sanotti from SPH Marketing Team. 
+
+
+Row
+-------------------------------------
 
 ### Analysis
-<div>
-![analysis](https://drive.google.com/file/d/1BbfHLzXFLdMLUIjTUzd7-Mj61-bmLI3h/view?usp=sharing)
-</div>
+
+```{r}
+include_graphics("Analysis_methods.png") 
+```
+
+
+### Extra Comments on Analysis
+1. The analysis was done by Rachael Beer, Nicholas Hartman and Mukai Wang. STATCOM leader Steve Salerno and faculty advisor Tom Braun also provided advice. All the analysis were done in R.
+2. THe likert plot was done with the [likert](https://cran.r-project.org/web/packages/likert/likert.pdf) R package.
+3. [Wilcoxon tests](https://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test) are used for hypotheses tests of ranking data.
+4. The preprocessing includes removing numbers, removing punctuations, changing all the words to lowercase and [stemming words](https://en.wikipedia.org/wiki/Stemming). Therefore in the individual word ranking tables, some tokens are chopped versions of certain words that can be easily inferred.
+5. [TF-IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) takes into consideration both the frequency and the "uncommoness" of tokens.
+6. [STM](https://www.structuraltopicmodel.com/) identifies certain words that tend to appear together in the documents. The clusterings of words are called "topics".
+
 
 
 Question 1: How difficult was it to find the info you wanted on our site?(Open Response) {data-navmenu="Open Surveys"}

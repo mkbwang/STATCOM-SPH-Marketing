@@ -78,7 +78,7 @@ num_data=as.data.frame(num_data[complete.cases(sub),])
 #Create Factor Variables
 for(i in 1:7) {
   num_data[,i]=factor(num_data[,i])
-  levels(num_data[,i])=c("1","2","3","4","5","6","7")
+  levels(num_data[,i])=list("1"="1","2"="2","3"="3","4"="4","5"="5","6"="6","7"="7")
 }
 
 #Overall Likert Plot
